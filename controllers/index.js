@@ -36,7 +36,7 @@ module.exports = function (router) {
   };
 
   router.get("/", function (req, res) {
-    const { airports, clouds, rows, columns } = req.body;
+    const { airports, clouds, rows, columns } = req.query;
 
     if(airports < 3) {
         return res.json({error: 'You must insert more than 3 airports'})
@@ -178,7 +178,7 @@ module.exports = function (router) {
         (g) => g.x === cp.x - 1 && g.y === cp.y
       );
 
-      if (findedSubX) {
+      if (foundSubX) {
         const capFound = data.clouds_position.find(
           (cap) => cap.x === cp.x - 1 && cap.y === cp.y
         );
