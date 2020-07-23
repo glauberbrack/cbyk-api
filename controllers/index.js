@@ -37,6 +37,7 @@ module.exports = function (router) {
 
   router.get("/", function (req, res) {
     const { airports, clouds, rows, columns } = req.query;
+    console.log(airports, clouds, rows, columns)
 
     if(airports < 3) {
         return res.json({error: 'You must insert more than 3 airports'})
@@ -63,38 +64,38 @@ module.exports = function (router) {
 
     Array(Number(rows))
       .fill()
-      .forEach((r, i) => {
+      .forEach((row, rowNumber) => {
         Array(Number(columns))
           .fill()
-          .forEach((j, k) => {
-            data.grid.push({ x: i, y: k });
+          .forEach((column, columnNumber) => {
+            data.grid.push({ x: rowNumber, y: columnNumber });
           });
       });
 
     Array(Number(airports))
       .fill()
-      .forEach((a, i) => {
-        const xa = Math.floor(Math.random() * rows) + 0;
-        const ya = Math.floor(Math.random() * columns) + 0;
+      .forEach((airport, airportPosition) => {
+        const airpotPositionX = Math.floor(Math.random() * rows) + 0;
+        const airpotPositionY = Math.floor(Math.random() * columns) + 0;
 
-        data.airports_position[i] = { x: xa, y: ya };
+        data.airports_position[airportPosition] = { x: airpotPositionX, y: airpotPositionY };
       });
 
     Array(Number(clouds))
       .fill()
-      .forEach((c, i) => {
+      .forEach((cloud, cloudPosition) => {
         let equals = true;
 
         while (equals) {
-          const xc = Math.floor(Math.random() * rows) + 0;
-          const yc = Math.floor(Math.random() * columns) + 0;
+          const cloudPositionX = Math.floor(Math.random() * rows) + 0;
+          const cloudPositionY = Math.floor(Math.random() * columns) + 0;
 
           equals = !!data.airports_position.filter(
-            (a) => a.x === xc && a.y === yc
+            (airport) => airport.x === cloudPositionX && airport.y === cloudPositionY
           ).length;
 
           if (!equals) {
-            data.clouds_position[i] = { x: xc, y: yc };
+            data.clouds_position[cloudPosition] = { x: cloudPositionX, y: cloudPositionY };
           }
         }
       });
@@ -109,22 +110,22 @@ module.exports = function (router) {
     });
   });
 
-  router.get("/next", function (req, res) {
+  router.get("/nextday", function (req, res) {
     const day = data.day + 1;
     data.day = day;
 
-    data.clouds_position.map((cp) => {
+    data.clouds_position.map((cloudPosition) => {
       const foundAddX = data.grid.find(
-        (g) => g.x === cp.x + 1 && g.y === cp.y
+        (gridContainer) => gridContainer.x === cloudPosition.x + 1 && gridContainer.y === cloudPosition.y
       );
 
       if (foundAddX) {
-        const capFound = data.clouds_position.find(
-          (cap) => cap.x === cp.x + 1 && cap.y === cp.y
+        const cloudAirportPositionFound = data.clouds_position.find(
+          (cloudAirportPosition) => cloudAirportPosition.x === cloudPosition.x + 1 && cloudAirportPosition.y === cloudPosition.y
         );
 
-        if (!capFound) {
-          data.clouds_position.push({ x: cp.x + 1, y: cp.y });
+        if (!cloudAirportPositionFound) {
+          data.clouds_position.push({ x: cloudPosition.x + 1, y: cloudPosition.y });
         }
 
         const clouds_airport = data.airports_position.find(
@@ -132,11 +133,11 @@ module.exports = function (router) {
         );
 
         if (clouds_airport) {
-          const capFound = data.clouds_airports_position.find(
-            (cap) => cap.x === clouds_airport.x && cap.y === clouds_airport.y
+          const cloudAirportPositionFound = data.clouds_airports_position.find(
+            (cloudAirportPosition) => cloudAirportPosition.x === clouds_airport.x && cloudAirportPosition.y === clouds_airport.y
           );
 
-          if (!capFound) {
+          if (!cloudAirportPositionFound) {
             data.clouds_airports_position.push(clouds_airport);
           }
 
@@ -145,16 +146,16 @@ module.exports = function (router) {
       }
 
       const foundAddY = data.grid.find(
-        (g) => g.x === cp.x && g.y === cp.y + 1
+        (g) => g.x === cloudPosition.x && g.y === cloudPosition.y + 1
       );
 
       if (foundAddY) {
-        const capFound = data.clouds_position.find(
-          (cap) => cap.x === cp.x && cap.y === cp.y + 1
+        const cloudAirportPositionFound = data.clouds_position.find(
+          (cloudAirportPosition) => cloudAirportPosition.x === cloudPosition.x && cloudAirportPosition.y === cloudPosition.y + 1
         );
 
-        if (!capFound) {
-          data.clouds_position.push({ x: cp.x, y: cp.y + 1 });
+        if (!cloudAirportPositionFound) {
+          data.clouds_position.push({ x: cloudPosition.x, y: cloudPosition.y + 1 });
         }
 
         const clouds_airport = data.airports_position.find(
@@ -162,11 +163,11 @@ module.exports = function (router) {
         );
 
         if (clouds_airport) {
-          const capFound = data.clouds_airports_position.find(
-            (cap) => cap.x === clouds_airport.x && cap.y === clouds_airport.y
+          const cloudAirportPositionFound = data.clouds_airports_position.find(
+            (cloudAirportPosition) => cloudAirportPosition.x === clouds_airport.x && cloudAirportPosition.y === clouds_airport.y
           );
 
-          if (!capFound) {
+          if (!cloudAirportPositionFound) {
             data.clouds_airports_position.push(clouds_airport);
           }
 
@@ -175,16 +176,16 @@ module.exports = function (router) {
       }
 
       const foundSubX = data.grid.find(
-        (g) => g.x === cp.x - 1 && g.y === cp.y
+        (g) => g.x === cloudPosition.x - 1 && g.y === cloudPosition.y
       );
 
       if (foundSubX) {
-        const capFound = data.clouds_position.find(
-          (cap) => cap.x === cp.x - 1 && cap.y === cp.y
+        const cloudAirportPositionFound = data.clouds_position.find(
+          (cloudAirportPosition) => cloudAirportPosition.x === cloudPosition.x - 1 && cloudAirportPosition.y === cloudPosition.y
         );
 
-        if (!capFound) {
-          data.clouds_position.push({ x: cp.x - 1, y: cp.y });
+        if (!cloudAirportPositionFound) {
+          data.clouds_position.push({ x: cloudPosition.x - 1, y: cloudPosition.y });
         }
 
         const clouds_airport = data.airports_position.find(
@@ -192,11 +193,11 @@ module.exports = function (router) {
         );
 
         if (clouds_airport) {
-          const capFound = data.clouds_airports_position.find(
-            (cap) => cap.x === clouds_airport.x && cap.y === clouds_airport.y
+          const cloudAirportPositionFound = data.clouds_airports_position.find(
+            (cloudAirportPosition) => cloudAirportPosition.x === clouds_airport.x && cloudAirportPosition.y === clouds_airport.y
           );
 
-          if (!capFound) {
+          if (!cloudAirportPositionFound) {
             data.clouds_airports_position.push(clouds_airport);
           }
 
@@ -205,16 +206,16 @@ module.exports = function (router) {
       }
 
       const foundSubY = data.grid.find(
-        (g) => g.x === cp.x && g.y === cp.y - 1
+        (g) => g.x === cloudPosition.x && g.y === cloudPosition.y - 1
       );
 
       if (foundSubY) {
-        const capFound = data.clouds_position.find(
-          (cap) => cap.x === cp.x && cap.y === cp.y - 1
+        const cloudAirportPositionFound = data.clouds_position.find(
+          (cloudAirportPosition) => cloudAirportPosition.x === cloudPosition.x && cloudAirportPosition.y === cloudPosition.y - 1
         );
 
-        if (!capFound) {
-          data.clouds_position.push({ x: cp.x, y: cp.y - 1 });
+        if (!cloudAirportPositionFound) {
+          data.clouds_position.push({ x: cloudPosition.x, y: cloudPosition.y - 1 });
         }
 
         const clouds_airport = data.airports_position.find(
@@ -222,11 +223,11 @@ module.exports = function (router) {
         );
 
         if (clouds_airport) {
-          const capFound = data.clouds_airports_position.find(
-            (cap) => cap.x === clouds_airport.x && cap.y === clouds_airport.y
+          const cloudAirportPositionFound = data.clouds_airports_position.find(
+            (cloudAirportPosition) => cloudAirportPosition.x === clouds_airport.x && cloudAirportPosition.y === clouds_airport.y
           );
 
-          if (!capFound) {
+          if (!cloudAirportPositionFound) {
             data.clouds_airports_position.push(clouds_airport);
           }
 
