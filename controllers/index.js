@@ -1,22 +1,3 @@
-// 'use strict';
-
-// var Indexdata = require('../datas/index');
-
-
-// module.exports = function (router) {
-
-//     var data = new Indexdata();
-
-//     router.get('/', function (req, res) {
-
-
-//         res.render('index', data);
-
-
-//     });
-
-// };
-
 "use strict";
 
 module.exports = function (router) {
@@ -251,5 +232,6 @@ module.exports = function (router) {
       clouds: data.clouds_position,
       clouds_airports: data.clouds_airports_position,
     });
+
   });
 };
